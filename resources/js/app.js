@@ -8,10 +8,50 @@ require('./bootstrap');
 require('admin-lte');
 
 window.Vue = require('vue');
-import { Form, HasError, AlertError } from 'vform'
+import { Form, HasError, AlertError } from 'vform';
+import moment from 'moment';
+import VueProgressBar from 'vue-progressbar'
+import swal from 'sweetalert2';
 
-Vue.component(HasError.name, HasError)
-Vue.component(AlertError.name, AlertError)
+// use progress bar
+const options = {
+    color: '#bffaf3',
+    failedColor: '#874b4b',
+    thickness: '5px',
+    transition: {
+      speed: '0.2s',
+      opacity: '0.6s',
+      termination: 300
+    },
+    autoRevert: true,
+    location: 'left',
+    inverse: false
+  }
+  
+  Vue.use(VueProgressBar, options)
+//use sweetalert
+window.swal=swal;
+//use toaster
+const Toast = swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 3000,
+    timerProgressBar: true,
+    onOpen: (toast) => {
+      toast.addEventListener('mouseenter', Swal.stopTimer)
+      toast.addEventListener('mouseleave', Swal.resumeTimer)
+    }
+  })
+window.Toast = Toast;
+
+
+// FIre
+window.Fire = new Vue();
+
+// Error handling component
+Vue.component(HasError.name, HasError);
+Vue.component(AlertError.name, AlertError);
 
 window.Form= Form;
 import VueRouter from 'vue-router';
@@ -28,6 +68,17 @@ const router = new VueRouter({
     mode: 'history',
     routes // short for routes:routes
 })
+
+
+Vue.filter('upText', function(text){
+    return text.charAt(0).toUpperCase() +text.slice(1);
+});
+
+Vue.filter('myDate',function(created){
+    return moment(created).format('MMMM Do YYYY');
+});
+
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
