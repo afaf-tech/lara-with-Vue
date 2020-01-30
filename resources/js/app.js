@@ -14,7 +14,7 @@ import VueProgressBar from 'vue-progressbar'
 import swal from 'sweetalert2';
 
 // use progress bar
-const options = {
+const progressOption = {
     color: '#bffaf3',
     failedColor: '#874b4b',
     thickness: '5px',
@@ -28,7 +28,7 @@ const options = {
     inverse: false
   }
   
-  Vue.use(VueProgressBar, options)
+  Vue.use(VueProgressBar, progressOption)
 //use sweetalert
 window.swal=swal;
 //use toaster
@@ -60,6 +60,7 @@ Vue.use(VueRouter)
 
 let routes = [
     {path:'/dashboard', component:require('./components/Dashboard.vue').default},
+    {path:'/developer', component:require('./components/Developer.vue').default},
     {path:'/users', component:require('./components/Users.vue').default},
     {path:'/profile', component:require('./components/Profile.vue').default}
 ]
@@ -98,6 +99,20 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+Vue.component(
+  'passport-clients',
+  require('./components/passport/Clients.vue').default
+);
+
+Vue.component(
+  'passport-authorized-clients',
+  require('./components/passport/AuthorizedClients.vue').default
+);
+
+Vue.component(
+  'passport-personal-access-tokens',
+  require('./components/passport/PersonalAccessTokens.vue').default
+);
  const app = new Vue({
     el: '#app',
     router

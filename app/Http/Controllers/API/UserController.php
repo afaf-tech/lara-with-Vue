@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -40,11 +44,57 @@ class UserController extends Controller
             'email'=>$request['email'],
             'type'=>$request['type'],
             'bio'=>$request['bio'],
-            'photo'=>$request['photo'],
+            'photo'=>'profile.png',
             'password'=>Hash::make($request['password'])
         ]);
     }
+    /* For secure importance, we dont use id but directly use put method on api */
+    /* request is array */
+     public function updateProfile(Request $request)
+    {
+        $user = auth('api')->user();
 
+
+        $this->validate($request,[
+            'name' => 'required|string|max:191',
+            'email' => 'required|string|email|max:191|unique:users,email,'.$user->id,
+            'password' => 'sometimes|required|min:6'
+        ]);
+
+        // check current photo from user;
+        $currentPhoto = $user->photo;
+
+
+        if($request->photo != $currentPhoto){
+            $name = time().'.' . explode('/', explode(':', substr($request->photo, 0, strpos($request->photo, ';')))[1])[1];
+
+
+            \Image::make($request->photo)->save(public_path('img/profile/').$name);
+            $request->merge(['photo' => $name]);
+
+            $userPhoto = public_path('img/profile/').$currentPhoto;
+            //if current photo exists ,do delete old photo
+            if(file_exists($userPhoto)){
+                @unlink($userPhoto);
+            }
+
+        }
+
+        // to avoid save password withoud encryptfirst
+        if(!empty($request->password)){
+            $request->merge(['password' => Hash::make($request['password'])]);
+        }
+
+        //update
+        $user->update($request->all());
+        return ['message' => "Successfully updated this current user"];
+    } 
+
+
+    public function profile()
+    {
+        return auth('api')->user();
+    }
     /**
      * Display the specified resource.
      *
