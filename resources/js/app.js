@@ -13,6 +13,13 @@ import moment from 'moment';
 import VueProgressBar from 'vue-progressbar'
 import swal from 'sweetalert2';
 
+//Gate
+import Gate from "./Gate";
+Vue.prototype.$gate =new Gate(window.user);
+
+
+
+
 // use progress bar
 const progressOption = {
     color: '#bffaf3',
