@@ -64,12 +64,16 @@ window.Form= Form;
 import VueRouter from 'vue-router';
 Vue.use(VueRouter)
 
+Vue.component('pagination', require('laravel-vue-pagination'));
+
+
 
 let routes = [
     {path:'/dashboard', component:require('./components/Dashboard.vue').default},
     {path:'/developer', component:require('./components/Developer.vue').default},
     {path:'/users', component:require('./components/Users.vue').default},
-    {path:'/profile', component:require('./components/Profile.vue').default}
+    {path:'/profile', component:require('./components/Profile.vue').default},
+    {path:'*', component:require('./components/NotFound.vue').default}
 ]
 
 const router = new VueRouter({
@@ -120,9 +124,28 @@ Vue.component(
   'passport-personal-access-tokens',
   require('./components/passport/PersonalAccessTokens.vue').default
 );
+
+
+Vue.component(
+  'not-found',
+  require('./components/NotFound.vue').default
+);
+
+
+
+
  const app = new Vue({
     el: '#app',
-    router
+    router,
+    data:{
+      search:''
+    },
+    methods:{
+      searchit:_.debounce(()=>{
+        // create customs event
+        Fire.$emit('searching');
+      },1000)
+    }
 }); 
 
 // "h" is just a standard taken from JSX
